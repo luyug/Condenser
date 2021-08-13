@@ -1,8 +1,24 @@
 # Condenser
-Code for converting a pre-trained Transformer encoder LM into Condenser, a Transformer architecture specialized in bi-encoder training. Details can be found in our preprint, [Is Your Language Model Ready for Dense Representation Fine-tuning?](https://arxiv.org/abs/2104.08253).
+Code for Condenser family, Transformer architectures for dense retrieval pre-training. Details can be found in our preprints, [Is Your Language Model Ready for Dense Representation Fine-tuning?](https://arxiv.org/abs/2104.08253) and [Unsupervised Corpus Aware Language Model Pre-training for Dense Passage Retrieval
+](https://arxiv.org/abs/2108.05540).
 
 
-Currently supported architectures include all models with BERT or RoBERTa architecture.
+Currently supports all models with BERT or RoBERTa architecture.
+
+## Resource
+### Pre-trained Models
+Headless Condenser can be retrived from Huggingface Hub using the following identifier strings.
+- `Luyu/condenser`: Condenser trained on BookCorpus and Wikipedia 
+- `Luyu/co-condenser-wiki`: coCondenser trained on Wikipedia 
+- `Luyu/co-condenser-marco`: coCondenser trained on MS-MARCO collection
+
+For example, to load Condenser weights,
+```
+from transformers import AutoModel
+model = AutoModel.from_pretrained('Luyu/condenser')
+```
+
+*Models with head will be addes soon after we decided where to host them.*
 
 
 ## Dependencies
@@ -28,7 +44,7 @@ done
 ```
 
 ## Pre-training
-The following code lauch training on 4 gpus and train BERT variant `bert-base-uncased` into Condenser.
+The following code lauch training on 4 gpus and train Condenser warm starting from BERT (`bert-base-uncased`) .
 ```
 python -m torch.distributed.launch --nproc_per_node 4 run_pre_training.py \
   --output_dir $OUTDIR \
@@ -50,6 +66,8 @@ python -m torch.distributed.launch --nproc_per_node 4 run_pre_training.py \
   --weight_decay 0.01 \
   --late_mlm
 ```
+
+*coCondenser pre-training code will be added within a week.*
 
 ## Fine-tuning
 The saved model can be loaded directly using huggingface interface and fine-tuned,
