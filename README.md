@@ -18,7 +18,7 @@ from transformers import AutoModel
 model = AutoModel.from_pretrained('Luyu/condenser')
 ```
 
-*Models with head will be addes soon after we decided where to host them.*
+*Models with head will be adde soon after we decided where to host them.*
 
 
 ## Dependencies
