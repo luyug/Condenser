@@ -8,9 +8,9 @@ Currently supports all models with BERT or RoBERTa architecture.
 ## Resource
 ### Pre-trained Models
 Headless Condenser can be retrived from Huggingface Hub using the following identifier strings.
-- `Luyu/condenser`: Condenser trained on BookCorpus and Wikipedia 
-- `Luyu/co-condenser-wiki`: coCondenser trained on Wikipedia 
-- `Luyu/co-condenser-marco`: coCondenser trained on MS-MARCO collection
+- `Luyu/condenser`: Condenser pre-trained on BookCorpus and Wikipedia 
+- `Luyu/co-condenser-wiki`: coCondenser pre-trained on Wikipedia 
+- `Luyu/co-condenser-marco`: coCondenser pre-trained on MS-MARCO collection
 
 For example, to load Condenser weights,
 ```
