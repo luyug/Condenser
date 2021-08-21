@@ -20,6 +20,14 @@ model = AutoModel.from_pretrained('Luyu/condenser')
 
 *Models with head will be adde soon after we decided where to host them.*
 
+## Fine-tuning
+The saved model can be loaded directly using huggingface interface and fine-tuned,
+```
+from transformers import AutoModel
+model = AutoModel.from_pretrained('path/to/train/output')
+```
+- For reproducing open QA experiments on NQ/TriviaQA, you can use the DPR toolkit and set `--pretrained_model_cfg` to a Condenser checkpoint. If GPU memory is an issue running DPR, you can alternatively use our [GC-DPR](https://github.com/luyug/GC-DPR) toolkit, which allows limited memory setup to train DPR without performance sacrifice.
+- For supervised IR on MS-MARCO, you can use our [Dense](https://github.com/luyug/Dense) toolkit. We will also add open QA examples and pre-processing code to Dense soon.
 
 ## Dependencies
 The code uses the following packages,
@@ -68,10 +76,3 @@ python -m torch.distributed.launch --nproc_per_node 4 run_pre_training.py \
 ```
 
 *coCondenser pre-training code will be added within a week.*
-
-## Fine-tuning
-The saved model can be loaded directly using huggingface interface and fine-tuned,
-```
-from transformers import AutoModel
-model = AutoModel.from_pretrained('path/to/train/output')
-```
