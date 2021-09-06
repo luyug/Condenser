@@ -26,6 +26,8 @@ The saved model can be loaded directly using huggingface interface and fine-tune
 from transformers import AutoModel
 model = AutoModel.from_pretrained('path/to/train/output')
 ```
+The head will then be automatically omitted in fine-tuninig.
+
 - For reproducing open QA experiments on NQ/TriviaQA, you can use the DPR toolkit and set `--pretrained_model_cfg` to a Condenser checkpoint. If GPU memory is an issue running DPR, you can alternatively use our [GC-DPR](https://github.com/luyug/GC-DPR) toolkit, which allows limited memory setup to train DPR without performance sacrifice.
 - For supervised IR on MS-MARCO, you can use our [Dense](https://github.com/luyug/Dense) toolkit. We will also add open QA examples and pre-processing code to Dense soon.
 
@@ -38,20 +40,20 @@ datasets
 nltk
 ```
 
-## Pre-processing
+## Condenser Pre-training
+### Pre-processing
 We first tokenize all the training text before running pre-training. The pre-processor expects one-paragraph per-line format. It will then run for each line sentence tokenizer to construct the final training data instances based on passed in `--max_len`. The output is a json file. We recommend first break the full corpus into shards.
 ```
 for s in shard1, shard2, shardN
 do
- python data/create_train.py \
+ python helper/create_train.py \
   --tokenizer_name bert-base-uncased \
   --file $s \
   --save_to $JSON_SAVE_DIR \
   --max_len $MAX_LENGTH
 done
 ```
-
-## Pre-training
+### Pre-training
 The following code lauch training on 4 gpus and train Condenser warm starting from BERT (`bert-base-uncased`) .
 ```
 python -m torch.distributed.launch --nproc_per_node 4 run_pre_training.py \
@@ -75,4 +77,57 @@ python -m torch.distributed.launch --nproc_per_node 4 run_pre_training.py \
   --late_mlm
 ```
 
-*coCondenser pre-training code will be added within a week.*
+## coCondenser Pre-training
+### Pre-processing
+First tokenize all the training text before running pre-training. The pre-processor expects one training document per line, with document broken into spans, e.g.
+```
+{'spans': List[str]}
+...
+```
+We recommend breaking the full corpus into shards. Then run tokenization script,
+```
+for s in shard1, shard2, shardN
+do
+ python helper/create_train_co.py \
+  --tokenizer_name bert-base-uncased \
+  --file $s \
+  --save_to $JSON_SAVE_DIR
+done
+```
+### Pre-training
+Launch training with the following script. Our experiments in the paper warm start the coCondenser (both head and backbone) from a Condenser checkpoint.
+```
+python -m torch.distributed.launch --nproc_per_node $NPROC run_co_pre_training.py \
+  --output_dir $OUTDIR \
+  --model_name_or_path /path/to/pre-trained/condenser/model \
+  --do_train \
+  --save_steps 20000 \
+  --model_type bert \
+  --per_device_train_batch_size $BATCH_SIZE \
+  --gradient_accumulation_steps 1 \
+  --fp16 \
+  --warmup_ratio 0.1 \
+  --learning_rate 1e-4 \
+  --num_train_epochs 8 \
+  --dataloader_drop_last \
+  --overwrite_output_dir \
+  --dataloader_num_workers 32 \
+  --n_head_layers 2 \
+  --skip_from 6 \
+  --max_seq_length $MAX_LENGTH \
+  --train_dir $JSON_SAVE_DIR \
+  --weight_decay 0.01 \
+  --late_mlm
+```
+Having `NPROC x BATCH_SIZE` to be large is critical for effective contrastive pre-training. It is set to roughly 2048 in our experiments.
+*Warning: gradient_accumulation_steps should be kept at 1 as accumulation cannot emulate large batch for contrative loss.*
+
+If total GPU memory is bottlnecking, you may consider using gradient cached update. Download and install `GradCache` package from its [repo](https://github.com/luyug/GradCache). Then set additional command line argument `--cache_chunk_size` to be the desired sub-batch size. More about grad cache can be found in its paper, [Scaling Deep Contrastive Learning Batch Size under Memory Limited Setup](https://arxiv.org/abs/2101.06983).
+```
+@inproceedings{gao2021scaling,
+     title={Scaling Deep Contrastive Learning Batch Size under Memory Limited Setup},
+     author={Luyu Gao, Yunyi Zhang, Jiawei Han, Jamie Callan},
+     booktitle ={Proceedings of the 6th Workshop on Representation Learning for NLP},
+     year={2021},
+}
+```
