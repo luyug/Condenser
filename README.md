@@ -1,5 +1,5 @@
 # Condenser
-Code for Condenser family, Transformer architectures for dense retrieval pre-training. Details can be found in our preprints, [Is Your Language Model Ready for Dense Representation Fine-tuning?](https://arxiv.org/abs/2104.08253) and [Unsupervised Corpus Aware Language Model Pre-training for Dense Passage Retrieval
+Code for Condenser family, Transformer architectures for dense retrieval pre-training. Details can be found in our papers, [Condenser: a Pre-training Architecture for Dense Retrieval](https://arxiv.org/abs/2104.08253) and [Unsupervised Corpus Aware Language Model Pre-training for Dense Passage Retrieval
 ](https://arxiv.org/abs/2108.05540).
 
 
