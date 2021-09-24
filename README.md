@@ -29,7 +29,7 @@ model = AutoModel.from_pretrained('path/to/train/output')
 The head will then be automatically omitted in fine-tuninig.
 
 - For reproducing open QA experiments on NQ/TriviaQA, you can use the DPR toolkit and set `--pretrained_model_cfg` to a Condenser checkpoint. If GPU memory is an issue running DPR, you can alternatively use our [GC-DPR](https://github.com/luyug/GC-DPR) toolkit, which allows limited memory setup to train DPR without performance sacrifice.
-- For supervised IR on MS-MARCO, you can use our [Dense](https://github.com/luyug/Dense) toolkit. We will also add open QA examples and pre-processing code to Dense soon.
+- For supervised IR on MS-MARCO, you can use our [Tevatron](https://github.com/texttron/tevatron/tree/main/examples/coCondenser-marco) toolkit (an official version of our Dense prototype toolkit). We will also add open QA examples and pre-processing code to Dense soon.
 
 ## Dependencies
 The code uses the following packages,
