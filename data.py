@@ -58,7 +58,7 @@ class CondenserCollator(DataCollatorForWholeWordMask):
                 raise ValueError('We expect only raw input for roberta for current implementation')
 
             if i == 0:
-                cand_indexes.append(0)
+                cand_indexes.append([0])
             elif not token.startswith('\u0120'):
                 cand_indexes[-1].append(i)
             else:

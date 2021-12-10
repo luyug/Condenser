@@ -183,4 +183,4 @@ class CoCondenserPretrainer(CondenserPreTrainer):
                 else:
                     (lm_loss + surrogate).backward()
             total_loss += lm_loss
-        return total_loss
+        return total_loss.detach()
