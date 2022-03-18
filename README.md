@@ -18,7 +18,10 @@ from transformers import AutoModel
 model = AutoModel.from_pretrained('Luyu/condenser')
 ```
 
-*Models with head will be adde soon after we decided where to host them.*
+You can also download models with head weights from our server. Note that head weights are not necessary if you just want to fine tune the model. On the other hand, these weights are critical if you'd like to do further pre-training, e.g. for domain transfer. Using a randomly initalized head will likely corrupt the rest of the model. 
+- `condenser`: [link](https://boston.lti.cs.cmu.edu/luyug/condenser/condenser.tar.gz)
+- `co-condenser-wiki`: [link](https://boston.lti.cs.cmu.edu/luyug/co-condenser/co-condenser-wiki.tar.gz)
+- `co-condenser-marco`: [link](https://boston.lti.cs.cmu.edu/luyug/co-condenser/co-condenser-marco.tar.gz)
 
 ## Fine-tuning
 The saved model can be loaded directly using huggingface interface and fine-tuned,
